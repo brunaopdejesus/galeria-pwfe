@@ -1,22 +1,35 @@
 "use strict"
 
-// vem de um banco de dados
-const imagens = [
-    "./img/img1.PNG",
-    "./img/img2.PNG",
-    "./img/img3.PNG",
-    "./img/img4.PNG",
-    "./img/img5.PNG",
-    "./img/img6.PNG",
-    "./img/img7.PNG",
-    "./img/img8.PNG"
-];
+const limpar = (elemento) => {
+    while (elemento.firstChild) {
+        elemento.removeChild(elemento.lastChild)
+    }
+} 
+
+const pegarImagens = (raca) => fetch(`https://dog.ceo/api/breed/${raca}/images`);
+
+const procurarImagens = async (evento) => {
+
+    if(evento.key === 'Enter') {
+        const raca = evento.target.value;
+        const imagensResponse = await pegarImagens(raca);
+        const imagens = await imagensResponse.json();
+    
+        limpar(document.querySelector(".galeria-container"));
+        limpar(document.querySelector(".slide-container"));
+        carregarImagens(imagens.message);
+        carregarSlides(imagens.message);
+    }
+
+
+}
 
 // barra separa os elementos
-const limparId = (urlImagem) => urlImagem.split('/')[2]
-                                            .split('.')[0]
-                                            .replace(" ","-")
-                                            .toLowerCase();
+const limparId = (urlImagem) => {
+    const posicaoBarra = urlImagem.lastIndexOf('/') + 1;
+    const posicaoPonto = urlImagem.lastIndexOf('.');
+    return urlImagem.substring(posicaoBarra, posicaoPonto)
+}
 
 const criarItem = (urlImagem) => {
     const container = document.querySelector(".galeria-container");
@@ -28,8 +41,7 @@ const criarItem = (urlImagem) => {
 
 }
 
-const carregarImagens = () => imagens.forEach(criarItem);
-
+const carregarImagens = (imagens) => imagens.forEach(criarItem);
 
 const criarSlide = (urlImagem, indice, arr) => {
     const container = document.querySelector('.slide-container');
@@ -55,8 +67,7 @@ const criarSlide = (urlImagem, indice, arr) => {
     container.appendChild(slide);
 }
 
+const carregarSlides = (imagens) => imagens.forEach(criarSlide);
 
-const carregarSlides = () => imagens.forEach(criarSlide);
-
-carregarImagens();
-carregarSlides();
+document.querySelector(".pesquisa-container input")
+        .addEventListener('keypress', procurarImagens);

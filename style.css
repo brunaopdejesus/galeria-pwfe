@@ -21,6 +21,7 @@ header{
 h1 {
     color: #FFF;
     text-transform: uppercase;
+    margin-top: 15px;
 }
 main{
     flex-grow: 1;
